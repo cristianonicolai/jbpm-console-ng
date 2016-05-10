@@ -18,6 +18,9 @@ package org.jbpm.console.ng.gc.forms.client.display.views;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jbpm.console.ng.gc.forms.client.display.GenericFormDisplayer;
@@ -25,6 +28,8 @@ import org.jbpm.console.ng.ga.forms.display.view.FormContentResizeListener;
 import org.uberfire.mvp.Command;
 
 public class EmbeddedFormDisplayView implements FormDisplayerView {
+
+    public static String MAX_HEIGHT="550px";
 
     @Inject
     private VerticalPanel formContainer;
@@ -44,9 +49,23 @@ public class EmbeddedFormDisplayView implements FormDisplayerView {
     @Override
     public void display(GenericFormDisplayer displayer) {
         currentDisplayer = displayer;
+
+        ScrollPanel formPanel = GWT.create(ScrollPanel.class);
+        formPanel.add(displayer.getContainer());
+        formPanel.setHeight(MAX_HEIGHT);
+
+        VerticalPanel buttonsPanel = GWT.create(VerticalPanel.class);
+        buttonsPanel.setHeight("50px");
+        buttonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        buttonsPanel.add(displayer.getFooter());
+
         formContainer.clear();
-        formContainer.add(displayer.getContainer());
-        if (displayer.getOpener() == null) formContainer.add(displayer.getFooter());
+        formContainer.add(formPanel);
+
+        if (displayer.getOpener() == null) {
+            formContainer.add(buttonsPanel);
+        }
+
     }
 
     public Widget getView() {

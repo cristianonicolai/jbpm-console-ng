@@ -110,7 +110,7 @@ public class ProcessInstanceDetailsMultiPresenter implements RefreshMenuBuilder.
     @Inject
     private RuntimeLogPresenter runtimeLogPresenter;
 
-    private String selectedDeploymentId = "";
+    private String selectedProcessInstanceId = "";
 
     private int selectedProcessInstanceStatus = 0;
 
@@ -118,7 +118,7 @@ public class ProcessInstanceDetailsMultiPresenter implements RefreshMenuBuilder.
 
     private PlaceRequest place;
 
-    private String deploymentId = "";
+    private String processInstanceId = "";
 
     private String processId = "";
 
@@ -155,14 +155,14 @@ public class ProcessInstanceDetailsMultiPresenter implements RefreshMenuBuilder.
     }
 
     public void onProcessSelectionEvent( @Observes ProcessInstanceSelectionEvent event ) {
-        deploymentId = String.valueOf( event.getProcessInstanceId() );
+        processInstanceId = String.valueOf( event.getProcessInstanceId() );
         processId = event.getProcessDefId();
-        selectedDeploymentId = event.getDeploymentId();
+        selectedProcessInstanceId = event.getDeploymentId();
         selectedProcessInstanceStatus = event.getProcessInstanceStatus();
         selectedProcessDefName = event.getProcessDefName();
         setIsForLog(event.isForLog());
 
-        changeTitleWidgetEvent.fire( new ChangeTitleWidgetEvent( this.place, String.valueOf(deploymentId) + " - " + selectedProcessDefName ) );
+        changeTitleWidgetEvent.fire( new ChangeTitleWidgetEvent( this.place, String.valueOf(processInstanceId) + " - " + selectedProcessDefName ) );
 
         if (isForLog()) {
             view.displayOnlyLogTab();
@@ -174,12 +174,12 @@ public class ProcessInstanceDetailsMultiPresenter implements RefreshMenuBuilder.
 
     @Override
     public void onRefresh() {
-        processInstanceSelected.fire( new ProcessInstanceSelectionEvent( selectedDeploymentId, Long.valueOf( deploymentId ), processId, selectedProcessDefName, selectedProcessInstanceStatus,isForLog() ) );
+        processInstanceSelected.fire( new ProcessInstanceSelectionEvent(selectedProcessInstanceId, Long.valueOf(processInstanceId), processId, selectedProcessDefName, selectedProcessInstanceStatus,isForLog() ) );
     }
 
     public void signalProcessInstance() {
         PlaceRequest placeRequestImpl = new DefaultPlaceRequest( "Signal Process Popup" );
-        placeRequestImpl.addParameter( "processInstanceId", deploymentId );
+        placeRequestImpl.addParameter( "processInstanceId", processInstanceId);
         placeManager.goTo( placeRequestImpl );
 
     }
@@ -192,7 +192,7 @@ public class ProcessInstanceDetailsMultiPresenter implements RefreshMenuBuilder.
                         if (processInstance.getState() == ProcessInstance.STATE_ACTIVE
                         || processInstance.getState() == ProcessInstance.STATE_PENDING) {
                             if (Window.confirm(constants.Abort_Process_Instance())) {
-                                final long processInstanceId = Long.parseLong(deploymentId);
+                                final long processInstanceId = Long.parseLong(ProcessInstanceDetailsMultiPresenter.this.processInstanceId);
                                 kieSessionServices.call(
                                         new RemoteCallback<Void>() {
                                             @Override
@@ -209,11 +209,11 @@ public class ProcessInstanceDetailsMultiPresenter implements RefreshMenuBuilder.
                     }
                 },
                 new DefaultErrorCallback()
-        ).getProcessInstanceById(Long.parseLong(deploymentId));
+        ).getProcessInstanceById(Long.parseLong(processInstanceId));
     }
 
     public void goToProcessInstanceModelPopup() {
-        if (place != null && !deploymentId.equals("")) {
+        if (place != null && !processInstanceId.equals("")) {
             dataServices.call(
                     new RemoteCallback<List<NodeInstanceSummary>>() {
                         @Override
@@ -248,17 +248,17 @@ public class ProcessInstanceDetailsMultiPresenter implements RefreshMenuBuilder.
                                                             .addParameter("completedNodes", completedNodeParam.toString())
                                                             .addParameter("readOnly", "true")
                                                             .addParameter("processId", processId)
-                                                            .addParameter("deploymentId", selectedDeploymentId)));
+                                                            .addParameter("processInstanceId", selectedProcessInstanceId)));
 
                                         }
                                     },
                                     new DefaultErrorCallback()
-                            ).getProcessInstanceCompletedNodes(Long.parseLong(deploymentId));
+                            ).getProcessInstanceCompletedNodes(Long.parseLong(processInstanceId));
 
                         }
                     },
                     new DefaultErrorCallback()
-            ).getProcessInstanceActiveNodes(Long.parseLong(deploymentId));
+            ).getProcessInstanceActiveNodes(Long.parseLong(processInstanceId));
         }
     }
 
