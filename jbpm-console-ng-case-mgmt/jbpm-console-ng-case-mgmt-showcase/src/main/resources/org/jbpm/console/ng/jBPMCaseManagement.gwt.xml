@@ -35,36 +35,19 @@
   <!-- Uberfire Extensions - Runtime Plugin -->
   <inherits name="org.uberfire.ext.plugin.RuntimePluginClient"/>
 
-  <!-- Uberfire Extensions - Apps -->
-  <inherits name="org.uberfire.ext.apps.UberfireAppsClient"/>
-
-  <!-- Drools dependencies -->
-  <inherits name="org.drools.workbench.models.datamodel.DroolsWorkbenchDataModelAPI"/>
-
   <!-- Guvnor dependencies -->
   <inherits name="org.guvnor.structure.GuvnorStructureClient"/>
-  <inherits name="org.guvnor.m2repo.GuvnorM2RepoEditorClient"/>
   <inherits name='org.guvnor.common.services.GuvnorServicesAPI'/>
   <inherits name="org.guvnor.common.services.project.GuvnorProjectAPI"/>
+  <inherits name="org.guvnor.common.services.project.GuvnorProjectClient"/>
   <inherits name="org.guvnor.common.services.workingset.GuvnorWorkingsetAPI"/>
   <inherits name="org.guvnor.common.services.workingset.GuvnorWorkingsetClient"/>
   <inherits name="org.guvnor.messageconsole.GuvnorMessageConsoleClient"/>
-  <inherits name="org.guvnor.asset.management.GuvnorAssetMgmtAPI"/>
-  <inherits name='org.guvnor.asset.management.GuvnorAssetMgmtClient'/>
 
   <!--Common Screens -->
-  <inherits name="org.kie.workbench.common.screens.explorer.KieWorkbenchProjectExplorerClient"/>
-  <inherits name="org.kie.workbench.common.screens.projecteditor.KieWorkbenchCommonProjectEditorClient"/>
-  <inherits name="org.kie.workbench.common.screens.defaulteditor.DroolsWorkbenchDefaultEditorClient"/>
-  <inherits name="org.kie.workbench.common.screens.projectimportsscreen.KieWorkbenchCommonProjectImportsScreenClient"/>
-  <inherits name="org.kie.workbench.common.services.datamodeller.DataModellerCore"/>
   <inherits name="org.kie.workbench.common.screens.datamodeller.KieWorkbenchDatamodellerClient"/>
   <inherits name="org.kie.workbench.common.widgets.decoratedgrid.KieWorkbenchDecoratedGridWidget"/>
-  <inherits name="org.kie.workbench.common.screens.search.KieWorkbenchSearchScreenClient"/>
   <inherits name="org.kie.workbench.common.workbench.KieDefaultWorkbenchClient"/>
-
-  <inherits name="org.drools.workbench.screens.drltext.DroolsWorkbenchDRLTextEditorClient"/>
-  <inherits name="org.drools.workbench.screens.workitems.DroolsWorkbenchWorkItemsEditorClient"/>
 
   <!-- Common Services -->
   <inherits name="org.kie.workbench.common.widgets.KieWorkbenchWidgetsCommon"/>
@@ -72,8 +55,8 @@
   <inherits name='org.kie.workbench.common.services.datamodel.KieWorkbenchCommonDataModelAPI'/>
 
   <!-- kie server -->
+  <inherits name="org.kie.server.controller.api.KieServerControllerAPI"/>
   <inherits name="org.kie.workbench.common.screens.server.management.ServerManagementAPI"/>
-  <inherits name="org.kie.workbench.common.screens.server.management.ServerManagementClient"/>
 
   <!-- Dashbuilder -->
   <inherits name="org.dashbuilder.DashbuilderClientAll"/>
