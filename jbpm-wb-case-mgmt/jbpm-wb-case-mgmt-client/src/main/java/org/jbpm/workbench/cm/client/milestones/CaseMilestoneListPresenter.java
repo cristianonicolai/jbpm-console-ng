@@ -16,60 +16,82 @@
 
 package org.jbpm.workbench.cm.client.milestones;
 
-import java.util.List;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
-import org.jbpm.workbench.cm.client.util.AbstractCaseInstancePresenter;
-import org.jbpm.workbench.cm.model.CaseInstanceSummary;
-import org.jbpm.workbench.cm.model.CaseMilestoneSummary;
-import org.jbpm.workbench.cm.util.CaseMilestoneSearchRequest;
+import com.google.gwt.core.client.GWT;
+import org.jboss.errai.common.client.util.Base64Util;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.jbpm.workbench.cm.client.util.KieServerInterceptor;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
+import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
+import org.uberfire.lifecycle.OnStartup;
+import org.uberfire.mvp.PlaceRequest;
 
-import org.uberfire.client.mvp.UberElement;
-
-import static org.jbpm.workbench.cm.client.resources.i18n.Constants.*;
+import static org.jbpm.workbench.cm.client.resources.i18n.Constants.MILESTONES;
+import static org.jbpm.workbench.cm.client.util.AbstractCaseInstancePresenter.PARAMETER_CASE_ID;
+import static org.jbpm.workbench.cm.client.util.AbstractCaseInstancePresenter.PARAMETER_CONTAINER_ID;
 
 @Dependent
 @WorkbenchScreen(identifier = CaseMilestoneListPresenter.SCREEN_ID)
-public class CaseMilestoneListPresenter extends AbstractCaseInstancePresenter<CaseMilestoneListPresenter.CaseMilestoneListView> {
+public class CaseMilestoneListPresenter {
 
-        public static final String SCREEN_ID = "Case Milestone List";
+    public static final String SCREEN_ID = "Case Milestone List";
 
+    @Inject
+    protected TranslationService translationService;
+
+//    @Inject
+    protected CaseMilestoneJS view;
 
     @WorkbenchPartTitle
     public String getTitle() {
         return translationService.format(MILESTONES);
     }
 
-    @Override
-    protected void clearCaseInstance() {
-        view.removeAllMilestones();
+    @WorkbenchPartView
+    public CaseMilestoneJS getView() {
+        GWT.log("getview: " + view);
+        return view;
     }
 
-    @Override
-    protected void loadCaseInstance(final CaseInstanceSummary cis) {
-        refreshData(caseId);
+    @OnStartup
+    public void onStartup(final PlaceRequest place) {
+        final byte[] auth = "admin:admin".getBytes();
+        KieServerInterceptor.setHttpHeader("Authorization", "Basic " + Base64Util.encode(auth, 0, auth.length));
+        KieServerInterceptor.setHttpHeader("Accept", "application/json");
+        KieServerInterceptor.setHttpHeader("Content-Type" , "application/json");
+
+        String caseId = place.getParameter(PARAMETER_CASE_ID, null);
+//        this.serverTemplateId = place.getParameter(PARAMETER_SERVER_TEMPLATE_ID, null);
+        String containerId = place.getParameter(PARAMETER_CONTAINER_ID, null);
+        final String kieServerURL = "http://localhost:8230/kie-server/services/rest/server";
+        view = CaseMilestoneJS.create(kieServerURL, containerId, caseId, null);
+        GWT.log("view: " + view);
+//        view.caseId = caseId;
+//        view.containerId = containerId;
+        view.refresh(null);
     }
 
-    protected void searchCaseMilestones() {
-        refreshData(caseId);
-    }
+//    @Override
+//    protected void clearCaseInstance() {
+//        view.removeAllMilestones();
+//    }
 
-    protected void refreshData(String caseId) {
-        caseService.call((List<CaseMilestoneSummary> milestones) -> {
-            view.setCaseMilestoneList(milestones);
-        }).getCaseMilestones(containerId, caseId, view.getCaseMilestoneSearchRequest());
-    }
+//    @Override
+//    protected void loadCaseInstance(final CaseInstanceSummary cis) {
+//        refreshData(caseId);
+//    }
 
-    public interface CaseMilestoneListView extends UberElement<CaseMilestoneListPresenter> {
+//    protected void searchCaseMilestones() {
+//        refreshData(caseId);
+//    }
 
-        void removeAllMilestones();
-
-        void setCaseMilestoneList(List<CaseMilestoneSummary> caseMilestoneList);
-
-        CaseMilestoneSearchRequest getCaseMilestoneSearchRequest();
-
-    }
+//    protected void refreshData(String caseId) {
+//        caseService.call((List<CaseMilestoneSummary> milestones) -> {
+//            view.setCaseMilestoneList(milestones);
+//        }).getCaseMilestones(containerId, caseId, view.getCaseMilestoneSearchRequest());
+//    }
 
 }

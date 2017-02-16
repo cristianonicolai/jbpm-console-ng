@@ -31,9 +31,9 @@ import org.jboss.errai.ui.shared.api.annotations.AutoBound;
 import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.jbpm.workbench.cm.model.CaseMilestoneSummary;
 import org.jbpm.workbench.cm.client.util.AbstractView;
 import org.jbpm.workbench.cm.client.util.DateConverter;
+import org.jbpm.workbench.cm.client.model.CaseMilestoneSummary;
 
 import static org.jboss.errai.common.client.dom.DOMUtil.addCSSClass;
 

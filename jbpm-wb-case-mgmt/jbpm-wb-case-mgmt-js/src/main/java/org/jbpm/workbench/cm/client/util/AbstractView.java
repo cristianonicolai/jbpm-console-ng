@@ -16,30 +16,19 @@
 
 package org.jbpm.workbench.cm.client.util;
 
-import java.util.Arrays;
+import org.jboss.errai.common.client.api.IsElement;
+import org.jboss.errai.common.client.dom.HTMLElement;
 
-public enum CaseMilestoneStatus {
+public abstract class AbstractView<T> implements IsElement {
 
-    AVAILABLE("Available"),
+    protected T presenter;
 
-    COMPLETED("Completed"),
-
-    TERMINATED("Terminated");
-
-    private String status;
-
-
-    CaseMilestoneStatus(final String status) {
-        this.status = status;
-
+    public void init(T presenter) {
+        this.presenter = presenter;
     }
 
-    public static CaseMilestoneStatus fromStatus(final String status) {
-        return Arrays.stream(CaseMilestoneStatus.values()).filter(e -> e.getStatus().equals(status)).findFirst().get();
-    }
-
-    public String getStatus() {
-        return status;
-    }
+    protected native void tooltip(final HTMLElement e) /*-{
+        $wnd.jQuery(e).tooltip();
+    }-*/;
 
 }

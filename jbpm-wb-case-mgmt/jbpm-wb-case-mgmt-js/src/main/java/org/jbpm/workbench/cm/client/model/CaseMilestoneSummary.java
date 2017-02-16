@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jbpm.workbench.cm.model;
+package org.jbpm.workbench.cm.client.model;
 
 import java.util.Date;
 import java.util.Objects;
@@ -138,7 +138,6 @@ public class CaseMilestoneSummary {
             caseMilestone.setIdentifier(identifier);
             return this;
         }
-
         public Builder achieved(boolean achieved) {
             caseMilestone.setAchieved(achieved);
             return this;

@@ -33,6 +33,7 @@
     <module>jbpm-wb-case-mgmt-api</module>
     <module>jbpm-wb-case-mgmt-client</module>
     <module>jbpm-wb-case-mgmt-backend</module>
+    <!--<module>jbpm-wb-case-mgmt-js</module>-->
     <module>jbpm-wb-case-mgmt-showcase</module>
   </modules>
 

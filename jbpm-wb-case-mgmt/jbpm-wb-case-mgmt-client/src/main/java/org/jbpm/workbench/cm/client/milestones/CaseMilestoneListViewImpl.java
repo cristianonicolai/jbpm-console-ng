@@ -17,32 +17,33 @@
 package org.jbpm.workbench.cm.client.milestones;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.Div;
-
 import org.jboss.errai.common.client.dom.HTMLElement;
+import org.jboss.errai.common.client.dom.MouseEvent;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.databinding.client.components.ListComponent;
 import org.jboss.errai.ui.shared.api.annotations.AutoBound;
 import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.jbpm.workbench.cm.client.util.AbstractView;
 import org.jbpm.workbench.cm.model.CaseMilestoneSummary;
-import org.jbpm.workbench.cm.util.CaseMilestoneSearchRequest;
+import org.jbpm.workbench.cm.client.util.AbstractView;
 
-import static org.jboss.errai.common.client.dom.DOMUtil.*;
+import static java.util.Comparator.comparing;
+import static org.jboss.errai.common.client.dom.DOMUtil.addCSSClass;
+import static org.jboss.errai.common.client.dom.DOMUtil.removeCSSClass;
 
 @Dependent
 @Templated
-public class CaseMilestoneListViewImpl extends AbstractView<CaseMilestoneListPresenter> implements CaseMilestoneListPresenter.CaseMilestoneListView {
-
-    @Inject
-    @DataField("search-actions")
-    private CaseMilestoneListSearchViewImpl actions;
+public class CaseMilestoneListViewImpl extends AbstractView<CaseMilestoneJS> implements CaseMilestoneJS.CaseMilestoneListView {
 
     @Inject
     @DataField("milestones")
@@ -51,6 +52,14 @@ public class CaseMilestoneListViewImpl extends AbstractView<CaseMilestoneListPre
     @Inject
     @DataField("empty-list-item")
     private Div emptyContainer;
+
+    @Inject
+    @DataField("sort-alpha-asc")
+    private Button sortAlphaAsc;
+
+    @Inject
+    @DataField("sort-alpha-desc")
+    private Button sortAlphaDesc;
 
     @Inject
     @Bound
@@ -63,9 +72,8 @@ public class CaseMilestoneListViewImpl extends AbstractView<CaseMilestoneListPre
 
 
     @Override
-    public void init(final CaseMilestoneListPresenter presenter) {
+    public void init(final CaseMilestoneJS presenter) {
         super.init(presenter);
-        actions.init(presenter);
         milestones.addComponentCreationHandler(v -> v.init(presenter));
     }
 
@@ -89,7 +97,25 @@ public class CaseMilestoneListViewImpl extends AbstractView<CaseMilestoneListPre
         return milestonesContainer;
     }
 
-    public CaseMilestoneSearchRequest getCaseMilestoneSearchRequest(){
-        return actions.getCaseInstanceSearchRequest();
+    @EventHandler("sort-alpha-asc")
+    public void onSortAlphaAsc(final @ForEvent("click") MouseEvent event) {
+        onSortChange(sortAlphaAsc, sortAlphaDesc, false);
     }
+
+    @EventHandler("sort-alpha-desc")
+    public void onSortAlphaDesc(final @ForEvent("click") MouseEvent event) {
+        onSortChange(sortAlphaDesc, sortAlphaAsc, true);
+    }
+
+    private void onSortChange(final HTMLElement toHide, final HTMLElement toShow, final Boolean sortByAsc){
+        addCSSClass(toHide, "hidden");
+        removeCSSClass(toShow, "hidden");
+        this.caseMilestoneList.getModel().sort(getCaseMilestoneSummaryComparator(sortByAsc));
+    }
+
+    protected Comparator<CaseMilestoneSummary> getCaseMilestoneSummaryComparator(final Boolean sortByAsc) {
+        Comparator<CaseMilestoneSummary> comparatorByName = comparing(CaseMilestoneSummary::getName);
+        return comparing(CaseMilestoneSummary::getStatus).thenComparing(sortByAsc ? comparatorByName: comparatorByName.reversed());
+    }
+
 }
