@@ -62,7 +62,7 @@ public abstract class AbstractScreenListPresenter<T> extends AbstractListPresent
     }
 
     public void onDetailScreenClosed(@Observes ClosePlaceEvent closed) {
-        if (detailScreenId.equals(closed.getPlace().getIdentifier())) {
+        if (detailScreenId != null && detailScreenId.equals(closed.getPlace().getIdentifier())) {
             createListBreadcrumb();
         }
     }
