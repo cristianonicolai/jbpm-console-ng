@@ -400,7 +400,7 @@ public class DashboardKpis {
                 .group(COLUMN_PROCESS_START_DATE).dynamic(30,
                                                           DateIntervalType.DAY,
                                                           true)
-                .column(COLUMN_PROCESS_START_DATE).format(i18n.processStartDate())
+                .column(COLUMN_PROCESS_START_DATE, "StartDate").format(i18n.processStartDate())
                 .column(COLUMN_PROCESS_INSTANCE_ID,
                         COUNT,
                         "Processes")

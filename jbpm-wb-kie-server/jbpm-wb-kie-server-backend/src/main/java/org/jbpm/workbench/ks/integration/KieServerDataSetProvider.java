@@ -70,22 +70,22 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
     public DataSetMetadata getDataSetMetadata(DataSetDef def) throws Exception {
         List<String> columnNames = new ArrayList<>();
         List<ColumnType> columnTypes = new ArrayList<>();
-        
+
 
         if (def.getColumns() == null && def instanceof RemoteDataSetDef) {
             final QueryServicesClient queryClient = getClient(((RemoteDataSetDef) def).getServerTemplateId(),
                                                               QueryServicesClient.class);
-            
+
             QueryDefinition definition = queryClient.getQuery(def.getUUID());
             if (definition.getColumns() != null) {
-                
+
                 for (Entry<String, String> entry : definition.getColumns().entrySet()) {
                     if (def.getColumnById(entry.getKey()) == null) {
                         def.addColumn(entry.getKey(), ColumnType.valueOf(entry.getValue()));
-                    }  
+                    }
                 }
             }
-            
+
         }
         List<DataColumnDef> columns = def.getColumns();
         for (DataColumnDef column : columns) {
@@ -104,9 +104,9 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
     @Override
     public DataSet lookupDataSet(DataSetDef def,
                                  DataSetLookup lookup) throws Exception {
-        
+
         ConsoleDataSetLookup dataSetLookup = adoptLookup(def, lookup);
-        
+
         LOGGER.debug("Data Set lookup using Server Template Id: {}",
                      dataSetLookup.getServerTemplateId());
         if (dataSetLookup.getServerTemplateId() == null || dataSetLookup.getServerTemplateId().isEmpty()) {
@@ -182,11 +182,11 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                             instances,
                             extraColumns);
     }
-    
+
     protected ConsoleDataSetLookup adoptLookup(DataSetDef def, DataSetLookup lookup) {
         ConsoleDataSetLookup dataSetLookup = null;
         if (!(lookup instanceof ConsoleDataSetLookup)) {
-            
+
             if (def instanceof RemoteDataSetDef) {
                 dataSetLookup = (ConsoleDataSetLookup) ConsoleDataSetLookup.fromInstance(lookup, ((RemoteDataSetDef) def).getServerTemplateId());
                 DataSetFilter filter = def.getDataSetFilter();
@@ -194,18 +194,18 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                     dataSetLookup.addOperation(filter);
                 }
             } else {
-            
+
                 throw new IllegalArgumentException("DataSetLookup is of incorrect type " + lookup.getClass().getName());
             }
         } else {
             dataSetLookup = (ConsoleDataSetLookup) lookup;
         }
-        
+
         return dataSetLookup;
     }
-    
+
     protected List<List> performQuery(RemoteDataSetDef def, ConsoleDataSetLookup dataSetLookup, QueryServicesClient queryClient, QueryFilterSpec filterSpec) {
-        
+
         if (dataSetLookup.testMode()) {
             QueryDefinition queryDefinition = QueryDefinition.builder()
                     .name(dataSetLookup.getDataSetUUID())
@@ -213,23 +213,23 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                     .target(def.getQueryTarget())
                     .expression(def.getDbSQL())
                     .build();
-            
+
             kieServerIntegration.broadcastToKieServers(((RemoteDataSetDef) def).getServerTemplateId(), (KieServicesClient client) -> {
                 QueryServicesClient instanceQueryClient = client.getServicesClient(QueryServicesClient.class);
                 QueryDefinition registered = instanceQueryClient.replaceQuery(queryDefinition);
                 if (registered.getColumns() != null) {
-                    
+
                     for (Entry<String, String> entry : registered.getColumns().entrySet()) {
                         if (def.getColumnById(entry.getKey()) == null) {
                             def.addColumn(entry.getKey(), ColumnType.valueOf(entry.getValue()));
-                        }  
+                        }
                     }
                 }
                 return registered;
             });
-            
-            
-            
+
+
+
             try {
                 final List<List> instances = queryClient.query(
                                                                dataSetLookup.getDataSetUUID(),
@@ -240,14 +240,14 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                                                                List.class
                                                        );
                 return instances;
-                
+
             } catch (Exception e) {
                 queryClient.unregisterQuery(dataSetLookup.getDataSetUUID());
                 throw new RuntimeException(e);
             }
-            
+
         } else {
-        
+
             final List<List> instances = queryClient.query(
                                                        dataSetLookup.getDataSetUUID(),
                                                        QueryServicesClient.QUERY_MAP_RAW,
@@ -256,7 +256,7 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                                                        dataSetLookup.getNumberOfRows(),
                                                        List.class
                                                );
-            
+
             return instances;
         }
     }
@@ -360,7 +360,7 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                                             coreFunctionFilter.getParameters()));
         }
     }
-    
+
     protected void handleDataSetGroup(DataSetDef def, DataSetGroup dataSetGroup, List<QueryParam> filterParams, List<DataColumn> extraColumns) {
         if (dataSetGroup != null) {
             if (dataSetGroup.getColumnGroup() != null) {
@@ -368,8 +368,8 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                 if (dataSetGroup.getColumnGroup().getIntervalSize() != null) {
                     filterParams.add(new QueryParam(dataSetGroup.getColumnGroup().getSourceId(),
                                                     "group",
-                                                    Arrays.asList(dataSetGroup.getColumnGroup().getColumnId(), 
-                                                                  dataSetGroup.getColumnGroup().getIntervalSize(), 
+                                                    Arrays.asList(dataSetGroup.getColumnGroup().getColumnId(),
+                                                                  dataSetGroup.getColumnGroup().getIntervalSize(),
                                                                   dataSetGroup.getColumnGroup().getMaxIntervals())));
                 } else {
                     filterParams.add(new QueryParam(dataSetGroup.getColumnGroup().getSourceId(),
@@ -387,11 +387,12 @@ public class KieServerDataSetProvider extends AbstractKieServerService implement
                     extraColumns.add(new DataColumnImpl(groupFunction.getSourceId(),
                                                         ColumnType.NUMBER));
                 } else {
+                    final DataColumnDef columnById = def.getColumnById(groupFunction.getColumnId());
                     filterParams.add(new QueryParam(groupFunction.getSourceId(),
                                                     null,
                                                     Arrays.asList(groupFunction.getColumnId())));
                     extraColumns.add(new DataColumnImpl(groupFunction.getSourceId(),
-                                                        def.getColumnById(groupFunction.getColumnId()).getColumnType()));
+                                                        columnById == null ? ColumnType.LABEL : columnById.getColumnType()));
                 }
             }
         }
