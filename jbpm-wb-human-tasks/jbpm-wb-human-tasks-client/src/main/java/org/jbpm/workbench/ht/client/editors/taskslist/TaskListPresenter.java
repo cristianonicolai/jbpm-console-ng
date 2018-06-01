@@ -29,6 +29,7 @@ import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.workbench.model.menu.Menus;
 
 import static org.jbpm.workbench.ht.util.TaskStatus.*;
+import static org.kie.workbench.common.workbench.client.PerspectiveIds.TASKS;
 
 @Dependent
 @WorkbenchScreen(identifier = PerspectiveIds.TASK_LIST_SCREEN)
@@ -51,16 +52,32 @@ public class TaskListPresenter extends AbstractTaskListPresenter<TaskListViewImp
 
     @Override
     public void createListBreadcrumb() {
-        setupListBreadcrumb(placeManager,
-                            org.jbpm.workbench.common.client.resources.i18n.Constants.INSTANCE.Task_Inbox());
+        if(isTaskInboxPerspective()) {
+            setupListBreadcrumb(placeManager,
+                                org.jbpm.workbench.common.client.resources.i18n.Constants.INSTANCE.Task_Inbox());
+        }
     }
 
     @Override
     public void setupDetailBreadcrumb(String detailLabel) {
-        setupDetailBreadcrumb(placeManager,
-                              org.jbpm.workbench.common.client.resources.i18n.Constants.INSTANCE.Task_Inbox(),
-                              detailLabel,
-                              PerspectiveIds.TASK_DETAILS_SCREEN);
+        if(isTaskInboxPerspective()) {
+            setupDetailBreadcrumb(placeManager,
+                                  org.jbpm.workbench.common.client.resources.i18n.Constants.INSTANCE.Task_Inbox(),
+                                  detailLabel,
+                                  PerspectiveIds.TASK_DETAILS_SCREEN);
+        }
+    }
+
+    @Override
+    protected void selectTask(final TaskSummary summary,
+                              final Boolean logOnly) {
+        if(isTaskInboxPerspective()) {
+            super.selectTask(summary,
+                             logOnly);
+        } else {
+            fireTaskSelectionEvent(summary,
+                                   logOnly);
+        }
     }
 
     @Inject
@@ -82,5 +99,14 @@ public class TaskListPresenter extends AbstractTaskListPresenter<TaskListViewImp
     protected Predicate<TaskSummary> getReleaseActionCondition() {
         return task -> task.getActualOwner() != null && task.getActualOwner().equals(identity.getIdentifier())
                 && super.getReleaseActionCondition().test(task);
+    }
+
+    @Override
+    protected Predicate<TaskSummary> getProcessInstanceCondition() {
+        return task -> super.getProcessInstanceCondition().test(task) && isTaskInboxPerspective();
+    }
+
+    protected boolean isTaskInboxPerspective(){
+        return TASKS.equals(getPerspectiveId());
     }
 }

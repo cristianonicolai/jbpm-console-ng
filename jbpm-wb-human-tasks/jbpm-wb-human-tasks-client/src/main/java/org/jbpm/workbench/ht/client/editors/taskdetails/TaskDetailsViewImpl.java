@@ -153,6 +153,16 @@ public class TaskDetailsViewImpl extends Composite implements TaskDetailsPresent
     }
 
     @Override
+    public void show() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void hide() {
+        this.setVisible(false);
+    }
+
+    @Override
     public void setTaskDescription(final String text) {
         taskDescriptionTextArea.setText(text);
     }

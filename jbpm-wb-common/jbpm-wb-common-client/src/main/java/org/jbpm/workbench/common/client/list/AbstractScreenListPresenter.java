@@ -98,8 +98,8 @@ public abstract class AbstractScreenListPresenter<T> extends AbstractListPresent
     @OnStartup
     public void onStartup(final PlaceRequest place) {
         this.place = place;
-        breadcrumbs.addToolbar(getPerspectiveId(),
-                               serverTemplateSelectorMenuBuilder.getView().getElement());
+//        breadcrumbs.addToolbar(getPerspectiveId(),
+//                               serverTemplateSelectorMenuBuilder.getView().getElement());
     }
 
     public String getPerspectiveId() {

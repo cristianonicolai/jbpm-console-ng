@@ -311,4 +311,9 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
             listTable.onResize();
         }
     }
+
+    @Override
+    public void hideActiveFilters() {
+        filters.getElement().classList.add("hidden");
+    }
 }

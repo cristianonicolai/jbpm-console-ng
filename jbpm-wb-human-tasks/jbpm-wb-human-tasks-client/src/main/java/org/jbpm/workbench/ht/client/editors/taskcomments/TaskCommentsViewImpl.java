@@ -76,7 +76,7 @@ public class TaskCommentsViewImpl extends Composite implements TaskCommentsPrese
     public Button addCommentButton = GWT.create(Button.class);
 
     @DataField
-    public PagedTable<CommentSummary> commentsListGrid = new PagedTable<CommentSummary>(COMMENTS_PER_PAGE);
+    public PagedTable<CommentSummary> commentsListGrid = new PagedTable<CommentSummary>(COMMENTS_PER_PAGE, null, null, false, false, false, false);
 
     private Constants constants = GWT.create(Constants.class);
 
@@ -123,6 +123,16 @@ public class TaskCommentsViewImpl extends Composite implements TaskCommentsPrese
 
         addCommentButton.setText(constants.Add_Comment());
         newTaskCommentLabel.setText(constants.Comment());
+    }
+
+    @Override
+    public void hide() {
+        this.setVisible(false);
+    }
+
+    @Override
+    public void show() {
+        this.setVisible(true);
     }
 
     @EventHandler("addCommentButton")

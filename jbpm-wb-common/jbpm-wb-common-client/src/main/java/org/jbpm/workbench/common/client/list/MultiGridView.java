@@ -28,6 +28,8 @@ public interface MultiGridView<T extends GenericSummary, V> extends ListView<T, 
 
     <T extends Object> void removeActiveFilter(ActiveFilterItem<T> filter);
 
+    void hideActiveFilters();
+
     void removeAllActiveFilters();
 
     void loadListTable(String key,

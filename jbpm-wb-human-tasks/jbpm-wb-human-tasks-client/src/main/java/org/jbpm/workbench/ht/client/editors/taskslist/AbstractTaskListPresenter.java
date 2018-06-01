@@ -319,13 +319,18 @@ public abstract class AbstractTaskListPresenter<V extends AbstractTaskListPresen
                 TASK_STATUS_EXITED.equals(summary.getTaskStatus())) {
             logOnly = true;
         }
+        selectTask(summary, logOnly);
+    }
+
+    protected void selectTask(final TaskSummary summary, final Boolean logOnly) {
         setupDetailBreadcrumb(constants.TaskBreadcrumb(summary.getId()));
         placeManager.goTo(PerspectiveIds.TASK_DETAILS_SCREEN);
         fireTaskSelectionEvent(summary,
                                logOnly);
+
     }
 
-    private void fireTaskSelectionEvent(TaskSummary summary,
+    protected void fireTaskSelectionEvent(TaskSummary summary,
                                         boolean logOnly) {
         taskSelected.fire(new TaskSelectionEvent(getSelectedServerTemplate(),
                                                  summary.getDeploymentId(),

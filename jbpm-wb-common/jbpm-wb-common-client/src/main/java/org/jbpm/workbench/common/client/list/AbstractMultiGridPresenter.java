@@ -252,4 +252,8 @@ public abstract class AbstractMultiGridPresenter<T extends GenericSummary, V ext
     public Predicate<T> getViewErrorsActionCondition() {
         return null;
     }
+
+    public void hideActiveFilters(){
+        view.hideActiveFilters();
+    }
 }

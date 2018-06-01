@@ -44,6 +44,7 @@ public class TaskCommentsPresenter {
     private long currentTaskId = 0;
     private String serverTemplateId;
     private String containerId;
+
     @Inject
     public TaskCommentsPresenter(TaskCommentsView view,
                                  Caller<TaskService> taskService) {
@@ -54,6 +55,7 @@ public class TaskCommentsPresenter {
     @PostConstruct
     public void init() {
         view.init(this);
+        view.hide();
     }
 
     public IsWidget getView() {
@@ -65,6 +67,9 @@ public class TaskCommentsPresenter {
     }
 
     public void refreshComments() {
+        if(currentTaskId > 0){
+            view.show();
+        }
         taskService.call(
                 new RemoteCallback<List<CommentSummary>>() {
                     @Override
@@ -147,5 +152,9 @@ public class TaskCommentsPresenter {
         void redrawDataGrid();
 
         void displayNotification(String text);
+
+        void hide();
+
+        void show();
     }
 }

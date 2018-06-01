@@ -66,6 +66,7 @@ public class TaskDetailsPresenter {
     @PostConstruct
     public void init() {
         view.init(this);
+        view.hide();
     }
 
     public IsWidget getView() {
@@ -139,6 +140,10 @@ public class TaskDetailsPresenter {
                        String.valueOf(event.getPriority()),
                        event.getProcessInstanceId(),
                        event.getProcessId());
+
+        if(currentTaskId > 0){
+            view.show();
+        }
     }
 
     public void onTaskRefreshedEvent(@Observes final TaskRefreshedEvent event) {
@@ -193,5 +198,9 @@ public class TaskDetailsPresenter {
         void setUpdateTaskVisible(Boolean enabled);
 
         void displayNotification(final String text);
+
+        void show();
+
+        void hide();
     }
 }

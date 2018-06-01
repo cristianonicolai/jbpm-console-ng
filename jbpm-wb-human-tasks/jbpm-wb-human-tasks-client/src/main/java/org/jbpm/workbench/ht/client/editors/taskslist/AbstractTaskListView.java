@@ -158,8 +158,8 @@ public abstract class AbstractTaskListView<P extends AbstractTaskListPresenter> 
                      columnMetas);
         columnMetas.add(actionsColumnMeta);
 
-        List<GridColumnPreference> columPreferenceList = extendedPagedTable.getGridPreferencesStore().getColumnPreferences();
-        for (GridColumnPreference colPref : columPreferenceList) {
+        List<GridColumnPreference> columnPreferenceList = extendedPagedTable.getGridPreferencesStore().getColumnPreferences();
+        for (GridColumnPreference colPref : columnPreferenceList) {
             if (!isColumnAdded(columnMetas,
                                colPref.getName())) {
                 Column<TaskSummary, ?> genericColumn = initGenericColumn(colPref.getName());
