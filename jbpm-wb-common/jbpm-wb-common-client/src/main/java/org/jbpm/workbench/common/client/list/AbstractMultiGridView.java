@@ -193,6 +193,7 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
                 addNewTableToColumn(newListGrid);
 
                 listTable = newListGrid;
+                newListGrid.getColumnSortList().setLimit(1);
 
                 reloadColumnSortList();
                 
@@ -537,7 +538,7 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
     @Override
     public String getSortColumn() {
         final ColumnSortList columnSortList = getListGrid().getColumnSortList();
-        if (columnSortList != null && columnSortList.size() == 1) {
+        if (columnSortList != null) {
             return columnSortList.get(0).getColumn().getDataStoreName();
         } else {
             return null;
@@ -547,7 +548,7 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
     @Override
     public Boolean isSortAscending() {
         final ColumnSortList columnSortList = getListGrid().getColumnSortList();
-        if (columnSortList != null && columnSortList.size() == 1) {
+        if (columnSortList != null) {
             return columnSortList.get(0).isAscending();
         } else {
             return null;
@@ -559,9 +560,7 @@ public abstract class AbstractMultiGridView<T extends GenericSummary, V extends 
         GridPreferencesStore gridPreferencesStore = getListGrid().getGridPreferencesStore();
         if (gridPreferencesStore != null) {
             GridSortedColumnPreference gridSortedColumnPreference = gridPreferencesStore.getGridSortedColumnPreference();
-            //Avoid duplicating the call push method of ColumnSortList when catch ColumnSortedEvent
-            //If repeating the call push method, there will throw 'IndexOutOfBoundsException: Row index: 0, Row size: 1'
-            if (gridSortedColumnPreference != null && columnSortList.size() <= 1) {
+            if (gridSortedColumnPreference != null) {
                 Optional<ColumnMeta<T>> optional = getListGrid().getColumnMetaList().stream().filter(
                         tColumnMeta -> tColumnMeta.getColumn().getDataStoreName().equals(gridSortedColumnPreference.getDataStoreName()))
                         .findFirst();

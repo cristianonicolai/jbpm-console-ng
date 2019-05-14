@@ -307,13 +307,9 @@ public abstract class AbstractMultiGridViewTest<T extends GenericSummary> {
         when(getView().getListGrid()).thenReturn(listTable);
         final ColumnSortList columnSortList = new ColumnSortList();
         columnSortList.push(getColumn("test"));
-        when(listTable.getColumnSortList()).thenReturn(null, null, new ColumnSortList(), new ColumnSortList(), columnSortList, columnSortList);
+        when(listTable.getColumnSortList()).thenReturn(null, null, columnSortList, columnSortList);
 
         //sort list null
-        assertNull(getView().getSortColumn());
-        assertNull(getView().isSortAscending());
-
-        //sort list empty
         assertNull(getView().getSortColumn());
         assertNull(getView().isSortAscending());
 
